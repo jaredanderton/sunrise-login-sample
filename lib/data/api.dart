@@ -9,7 +9,7 @@ class Api {
     // this should probably refactored and moved out of here, so we dont have to
     // create a new instance and take these steps every request. There should
     // probably be one of these for the entire app
-    bool usingCharles = true;
+    bool usingCharles = false;
     Dio dio = Dio();
     if(usingCharles) {
       dio.httpClientAdapter = DefaultHttpClientAdapter();
