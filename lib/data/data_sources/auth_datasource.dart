@@ -19,7 +19,7 @@ class AuthDataSource {
         'remember': remember
       }
     };
-    Response response = await _api.post('${host}/v2/user/login', data);
+    Response response = await _api.post('$host/v2/user/login', data);
     return AuthResponseJsonSerializer().fromMap(response?.data);
   }
 

@@ -36,6 +36,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
+  async_redux:
+    dependency: "direct main"
+    description:
+      name: async_redux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.4.4"
   boolean_selector:
     dependency: transitive
     description:
@@ -93,14 +100,14 @@ packages:
     source: hosted
     version: "4.3.2"
   built_value:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: built_value
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.8.2"
   built_value_generator:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: built_value_generator
       url: "https://pub.dartlang.org"
@@ -188,13 +195,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_redux:
-    dependency: "direct main"
-    description:
-      name: flutter_redux
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -361,6 +361,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.4"
+  path_provider:
+    dependency: transitive
+    description:
+      name: path_provider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.5.1"
   pedantic:
     dependency: transitive
     description:
@@ -375,6 +382,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.0"
+  platform:
+    dependency: transitive
+    description:
+      name: platform
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.1"
   pool:
     dependency: transitive
     description:
@@ -403,20 +417,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
-  redux:
-    dependency: transitive
-    description:
-      name: redux
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0"
-  redux_logging:
-    dependency: "direct main"
-    description:
-      name: redux_logging
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.0"
   shelf:
     dependency: transitive
     description:
@@ -543,3 +543,4 @@ packages:
     version: "2.2.0"
 sdks:
   dart: ">=2.6.0 <3.0.0"
+  flutter: ">=1.10.0 <2.0.0"
