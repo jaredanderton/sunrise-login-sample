@@ -1,13 +1,27 @@
 import 'dart:async';
-
 import 'package:sunriselogin/redux/redux.dart';
 
 class AuthUserLoginRequest implements Action {
   final Completer completer;
-  final String email;
-  final String password;
+  AuthUserLoginRequest(this.completer);
+}
 
-  AuthUserLoginRequest(this.completer, this.email, this.password);
+class AuthUserLoginSetEmail {
+  final String email;
+  AuthUserLoginSetEmail(this.email);
+
+  toJson() {
+    return {'email': email};
+  }
+}
+
+class AuthUserLoginSetPassword {
+  final String password;
+  AuthUserLoginSetPassword(this.password);
+
+  toJson() {
+    return {'password': password};
+  }
 }
 
 class AuthUserLoginSuccess {}

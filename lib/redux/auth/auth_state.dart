@@ -1,25 +1,23 @@
-import 'package:built_value/built_value.dart';
-import 'package:built_value/serializer.dart';
+class AuthState {
 
-part 'auth_state.g.dart';
+  String email;
+  String password;
+  String accessToken;
 
-abstract class AuthState implements Built<AuthState, AuthStateBuilder> {
+  AuthState({this.email, this.password, this.accessToken});
 
-  String get email;
-  String get password;
-  String get accessToken;
+  AuthState copy({String email, String password, String accessToken}) => AuthState(
+    email: email ?? this.email,
+    password: password ?? this.password,
+    accessToken: accessToken ?? this.accessToken,
+  );
 
-  @nullable
-  String get error;
-
-  factory AuthState() {
-    return _$AuthState._(
-      email: '',
-      password: '',
-      accessToken: '',
-    );
+  toJson() {
+    return {
+      'email': email,
+      'password': password,
+      'accessToken': accessToken,
+    };
   }
 
-  AuthState._();
-  static Serializer<AuthState> get serializer => _$authStateSerializer;
 }

@@ -1,13 +1,26 @@
 import 'package:redux/redux.dart';
+import 'package:sunriselogin/redux/app/app_state.dart';
 import 'package:sunriselogin/redux/auth/auth_actions.dart';
 import 'package:sunriselogin/redux/auth/auth_state.dart';
 
-Reducer<AuthState> authReducer = combineReducers([
-  TypedReducer<AuthState, AuthUserLoginRequest>(userLoginRequestReducer),
+Reducer<AppState> authReducer = combineReducers([
+  TypedReducer<AppState, AuthUserLoginSetEmail>(userLoginEmailSetReducer),
+  TypedReducer<AppState, AuthUserLoginSetPassword>(userLoginPasswordSetReducer),
 ]);
 
-AuthState userLoginRequestReducer(AuthState authState, AuthUserLoginRequest action) {
-  return authState.rebuild((b) => b
-    ..email = action.email
-    ..password = action.password);
+AppState userLoginEmailSetReducer(AppState appState, AuthUserLoginSetEmail action) {
+  print("------ userLoginEmailSetReducer fired");
+  return appState.copy(
+      authState: appState.authState.copy(
+        email: action.email
+      )
+  );
+}
+
+AppState userLoginPasswordSetReducer(AppState appState, AuthUserLoginSetPassword action) {
+  return appState.copy(
+      authState: appState.authState.copy(
+          email: action.password
+      )
+  );
 }

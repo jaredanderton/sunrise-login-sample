@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -28,19 +29,25 @@ class LoginScreen extends StatelessWidget {
 
 class LoginVM {
   bool isLoading;
-  AuthState authState;
-  final Function(BuildContext, String, String) onLoginPressed;
+//  AuthState authState;
+  String email;
+  final Function(BuildContext) onLoginPressed;
+  final Function(String email) onEmailChanged;
+  final Function(String password) onPasswordChanged;
 
   LoginVM({
     @required this.isLoading,
-    @required this.authState,
+    @required this.email,
     @required this.onLoginPressed,
+    @required this.onEmailChanged,
+    @required this.onPasswordChanged,
   });
 
   static LoginVM fromStore(Store<AppState> store) {
     return LoginVM(
-        authState: store.state.authState,
-        onLoginPressed: (BuildContext context, String email, String password) {
+//        authState: store.state.authState,
+        email: store.state.authState.email,
+        onLoginPressed: (BuildContext context) {
           final Completer<String> completer = new Completer<String>();
           completer.future.then((accessToken) {
             if(accessToken != null) {
@@ -58,9 +65,16 @@ class LoginVM {
             }
 
           });
-
-          store.dispatch(AuthUserLoginRequest(completer, email, password));
-        });
+          store.dispatch(AuthUserLoginRequest(completer));
+        },
+        onEmailChanged: (String email) {
+          store.dispatch(AuthUserLoginSetEmail(email));
+          print( jsonEncode(store.state) );
+        },
+        onPasswordChanged: (String password) {
+          store.dispatch(AuthUserLoginSetPassword(password));
+        },
+      );
   }
 }
 
@@ -78,78 +92,49 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginState extends State<LoginView> {
-  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  TextEditingController _emailController;
+  TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
 
   @override
   void didChangeDependencies() {
-    var authState = widget.viewModel.authState;
-    _emailController.text = authState.email;
-
     super.didChangeDependencies();
   }
 
   @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-
-    super.dispose();
-  }
-
-
-  @override
   Widget build(BuildContext context) {
-    var viewModel = widget.viewModel;
+    LoginVM viewModel = widget.viewModel;
 
-    final Key _emailKey = Key('__login__email__');
-    final Key _passwordKey = Key('__login__password__');
+// this is really bad, but seems to be neccessary (maybe just for when the keyboard is dismissed, but we're still typing; e.g. development/ external keyboard) - need to research this
+    _emailController.value = _emailController.value.copyWith(text: viewModel.email, selection: TextSelection.collapsed(offset: viewModel?.email?.length ?? -1));
 
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
         children: <Widget>[
           Form(
-            key: _formKey,
             child: FormCard(
               children: <Widget>[
                 TextFormField(
                   controller: _emailController,
-                  key: _emailKey,
                   autocorrect: false,
-                  decoration: InputDecoration(
-                      labelText: 'Email'),
+                  decoration: InputDecoration(labelText: 'Email: (${viewModel.email})'),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (val) => val.isEmpty || val.trim().length == 0
-                      ? 'Please enter your email'
-                      : null,
+                  onChanged: (email) => viewModel.onEmailChanged(email),
                 ),
                 TextFormField(
-                  controller: _passwordController,
-                  key: _passwordKey,
                   autocorrect: false,
-                  decoration: InputDecoration(
-                      labelText: 'Password'),
-                  validator: (val) => val.isEmpty || val.trim().length == 0
-                      ? 'Please enter your password'
-                      : null,
+                  decoration: InputDecoration(labelText: 'Password'),
+                  onChanged: (password) => viewModel.onPasswordChanged(password),
                   obscureText: true,
-                ),
-                viewModel.authState.error == null
-                    ? Container()
-                    : Container(
-                  padding: EdgeInsets.only(top: 26.0, bottom: 4.0),
-                  child: Center(
-                    child: Text(
-                      viewModel.authState.error,
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -157,14 +142,7 @@ class _LoginState extends State<LoginView> {
           RaisedButton(
             child: Text('LOGIN'),
             onPressed: () {
-              if (!_formKey.currentState.validate()) {
-                return;
-              }
-              viewModel.onLoginPressed(
-                  context,
-                  _emailController.text,
-                  _passwordController.text
-              );
+              viewModel.onLoginPressed(context);
             },
           ),
         ],

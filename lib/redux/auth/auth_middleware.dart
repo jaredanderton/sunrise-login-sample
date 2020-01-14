@@ -20,7 +20,7 @@ List<Middleware<AppState>> createStoreAuthMiddleware() {
 
 Middleware<AppState> _createAuthLoginRequest(AuthRepository repository) {
   return (Store<AppState> store, action, NextDispatcher next) {
-      repository.login(action.email, action.password, true).then((data) {
+    repository.login(store.state.authState.email, store.state.authState.password, true).then((data) {
         action.completer.complete(data?.meta?.accessToken);
       });
     next(action);
