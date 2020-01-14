@@ -7,7 +7,8 @@ class AuthDataSource {
   AuthDataSource(this._api);
   String get host {
     // environment check here
-    return 'http://localhost:4100';
+//    return 'http://localhost:4100';
+    return "https://api.sunriseapp.com";
   }
 
   Future<AuthResponse> loginRequest(String email, String password, bool remember) async {
