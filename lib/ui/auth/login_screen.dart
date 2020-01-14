@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -29,15 +28,15 @@ class LoginScreen extends StatelessWidget {
 
 class LoginVM {
   bool isLoading;
-//  AuthState authState;
-  String email;
+  AuthState authState;
+//  String email;
   final Function(BuildContext) onLoginPressed;
   final Function(String email) onEmailChanged;
   final Function(String password) onPasswordChanged;
 
   LoginVM({
     @required this.isLoading,
-    @required this.email,
+    @required this.authState,
     @required this.onLoginPressed,
     @required this.onEmailChanged,
     @required this.onPasswordChanged,
@@ -45,11 +44,11 @@ class LoginVM {
 
   static LoginVM fromStore(Store<AppState> store) {
     return LoginVM(
-//        authState: store.state.authState,
-        email: store.state.authState.email,
+        authState: store.state.authState,
         onLoginPressed: (BuildContext context) {
           final Completer<String> completer = new Completer<String>();
           completer.future.then((accessToken) {
+            store.dispatch(AuthUserLoginSetAccessToken(accessToken));
             if(accessToken != null) {
               final snackBar = SnackBar(
                 content: Text("Access Token: ${accessToken}"),
@@ -69,7 +68,6 @@ class LoginVM {
         },
         onEmailChanged: (String email) {
           store.dispatch(AuthUserLoginSetEmail(email));
-          print( jsonEncode(store.state) );
         },
         onPasswordChanged: (String password) {
           store.dispatch(AuthUserLoginSetPassword(password));
@@ -114,7 +112,8 @@ class _LoginState extends State<LoginView> {
     LoginVM viewModel = widget.viewModel;
 
 // this is really bad, but seems to be neccessary (maybe just for when the keyboard is dismissed, but we're still typing; e.g. development/ external keyboard) - need to research this
-    _emailController.value = _emailController.value.copyWith(text: viewModel.email, selection: TextSelection.collapsed(offset: viewModel?.email?.length ?? -1));
+    _emailController.value = _emailController.value.copyWith(text: viewModel?.authState?.email, selection: TextSelection.collapsed(offset: viewModel?.authState?.email?.length ?? -1));
+    _passwordController.value = _passwordController.value.copyWith(text: viewModel?.authState?.password, selection: TextSelection.collapsed(offset: viewModel?.authState?.password?.length ?? -1));
 
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -126,11 +125,12 @@ class _LoginState extends State<LoginView> {
                 TextFormField(
                   controller: _emailController,
                   autocorrect: false,
-                  decoration: InputDecoration(labelText: 'Email: (${viewModel.email})'),
+                  decoration: InputDecoration(labelText: 'Email:'),
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (email) => viewModel.onEmailChanged(email),
                 ),
                 TextFormField(
+                  controller: _passwordController,
                   autocorrect: false,
                   decoration: InputDecoration(labelText: 'Password'),
                   onChanged: (password) => viewModel.onPasswordChanged(password),

@@ -24,5 +24,14 @@ class AuthUserLoginSetPassword {
   }
 }
 
+class AuthUserLoginSetAccessToken {
+  final String accessToken;
+  AuthUserLoginSetAccessToken(this.accessToken);
+
+  toJson() {
+    return {'accessToken': accessToken};
+  }
+}
+
 class AuthUserLoginSuccess {}
 class AuthUserLoginFailure {}
